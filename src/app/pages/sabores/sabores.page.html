@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/saida-produto" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center" style="font-size: 1.5rem;">Sabores de {{ tipo }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="font-size: 1.2rem;">
+  <!-- Campo de Filtro com Sugestões -->
+  <ion-searchbar
+    [(ngModel)]="termoFiltro"
+    placeholder="Digite o sabor..."
+    (ionChange)="filtrarSabores()"
+    type="search"
+    debounce="300"
+    style="font-size: 1.2rem;"
+  ></ion-searchbar>
+
+  <!-- Lista de Sugestões -->
+  <ion-list *ngIf="termoFiltro" style="margin-top: 10px;">
+    <ion-item *ngFor="let sugestao of obterSugestoes()" (click)="selecionarSugestao(sugestao)" style="font-size: 1.2rem;">
+      <ion-label>{{ sugestao.sabor }}</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Lista de Sabores -->
+  <ion-list style="margin-top: 20px;">
+    <ion-item *ngFor="let produto of saboresFiltrados" style="font-size: 1.2rem;">
+      <ion-label>
+        <h2 style="font-size: 1.4rem; font-weight: bold;">{{ produto.sabor }}</h2>
+        <p style="color: var(--ion-color-dark);">Estoque: {{ produto.quantidade }}</p>
+        <p style="color: var(--ion-color-primary);">Quantidade de Saída: {{ produto.quantidadeSaida }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button (click)="diminuirQuantidade(produto)" [disabled]="produto.quantidadeSaida <= 0" style="font-size: 1.5rem;">
+          <ion-icon name="remove-outline"></ion-icon>
+        </ion-button>
+        <ion-button (click)="aumentarQuantidade(produto)" [disabled]="produto.quantidadeSaida >= produto.quantidade" style="font-size: 1.5rem;">
+          <ion-icon name="add-outline"></ion-icon>
+        </ion-button>
+        <ion-button (click)="excluirProduto(produto)" color="danger" style="font-size: 1.5rem;">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+
+  <!-- Mensagem quando não há sabores disponíveis -->
+  <div *ngIf="saboresFiltrados.length === 0" class="ion-text-center" style="margin-top: 20px;">
+    <ion-icon name="sad-outline" style="font-size: 3rem; color: var(--ion-color-medium);"></ion-icon>
+    <p style="font-size: 1.2rem; color: var(--ion-color-medium);">Nenhum sabor disponível.</p>
+  </div>
+
+  <!-- Botão de Confirmar Saída -->
+  <ion-button expand="full" (click)="confirmarSaida()" [disabled]="isLoading" style="font-size: 1.2rem; margin-top: 20px; padding: 20px;">
+    <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+    <ion-icon name="checkmark-outline" slot="start" *ngIf="!isLoading"></ion-icon>
+    Confirmar Saída
+  </ion-button>
+</ion-content>

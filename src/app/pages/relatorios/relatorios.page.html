@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button color="light"></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Relatório de Saídas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Filtros -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="ion-text-center">Filtros</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Filtrar por Mês:</ion-label>
+        <ion-select [(ngModel)]="filtroMes" (ionChange)="aplicarFiltros()">
+          <ion-select-option value="">Todos</ion-select-option>
+          <ion-select-option *ngFor="let mes of meses" [value]="mes">
+            {{ mes }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Lista de Relatórios -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="ion-text-center">Resumo de Saídas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list id="tabela-relatorio">
+        <ion-item *ngFor="let item of relatorio">
+          <ion-icon name="pricetag-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h2>{{ item.tipo }} de {{ item.sabor }}</h2>
+            <p>Quantidade: {{ item.quantidade }}</p>
+            <p>Preço Unitário: {{ item.preco | currency: 'BRL' }}</p>
+            <p><strong>Total: {{ item.totalPreco | currency: 'BRL' }}</strong></p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Total de Ganhos -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="ion-text-center">Total de Ganhos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <h2 class="ion-text-center ion-text-primary">
+        {{ totalGanho | currency: 'BRL' }}
+      </h2>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Botão para Gerar PDF -->
+  <ion-button expand="full" (click)="gerarPDF()" [disabled]="isLoading">
+    <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+    <ion-icon name="download-outline" slot="start" *ngIf="!isLoading"></ion-icon>
+    {{ isLoading ? 'Gerando PDF...' : 'Gerar PDF' }}
+  </ion-button>
+</ion-content>

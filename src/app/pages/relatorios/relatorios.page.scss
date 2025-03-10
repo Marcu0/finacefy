@@ -1,0 +1,57 @@
+ion-card {
+    margin-bottom: 20px;
+  }
+  
+  ion-list {
+    background: transparent;
+  }
+  
+  ion-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    margin-bottom: 10px;
+  }
+  
+  h2 {
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  
+  p {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .ion-text-primary {
+    color: var(--ion-color-primary);
+  }
+  
+  ion-button {
+    margin-top: 20px;
+  }
+  /* Tema Claro (Padrão) */
+:root {
+    --text-color: black; /* Texto preto */
+    --icon-color: black; /* Ícones pretos */
+  }
+  
+  /* Tema Escuro */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text-color: white; /* Texto branco */
+      --icon-color: white; /* Ícones brancos */
+    }
+  }
+  
+  /* Aplica as cores condicionais */
+  ion-item {
+    --color: var(--text-color); /* Cor do texto */
+  }
+  
+  ion-icon {
+    color: var(--icon-color); /* Cor dos ícones */
+  }
+  
+  h2, p {
+    color: var(--text-color); /* Cor do texto para títulos e parágrafos */
+  }

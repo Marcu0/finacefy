@@ -1,0 +1,7 @@
+{
+  "name": "control-gain",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

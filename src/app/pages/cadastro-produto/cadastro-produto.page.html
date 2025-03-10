@@ -1,0 +1,146 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button color="light"></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Cadastro de Produto</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding center-container">
+  <!-- Overlay de carregamento -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <p>Cadastrando...</p>
+  </div>
+
+  <!-- Feedback de sucesso -->
+  <div *ngIf="produtoCadastrado" class="success-animation">
+    <ion-icon name="checkmark-circle" class="success-icon"></ion-icon>
+    <p>Produto cadastrado com sucesso!</p>
+  </div>
+
+  <!-- Passos numerados -->
+  <div class="steps-container">
+    <div class="step" [class.active]="currentStep === 1" (click)="goToStep(1)">
+      <span class="step-number">1</span>
+      <span class="step-label">Tipo e Sabor</span>
+    </div>
+    <div class="step" [class.active]="currentStep === 2" (click)="goToStep(2)">
+      <span class="step-number">2</span>
+      <span class="step-label">Preço e Quantidade</span>
+    </div>
+    <div class="step" [class.active]="currentStep === 3" (click)="goToStep(3)">
+      <span class="step-number">3</span>
+      <span class="step-label">Confirmação</span>
+    </div>
+  </div>
+
+  <!-- Conteúdo dos passos -->
+  <ion-card class="center-card">
+    <ion-card-content>
+      <!-- Passo 1: Tipo e Sabor -->
+      <div *ngIf="currentStep === 1" [@slideAnimation]>
+        <h2 class="ion-text-center step-title">Passo 1: Tipo e Sabor</h2>
+        <ion-item lines="full" class="form-item">
+          <ion-icon name="pricetag-outline" slot="start" class="form-icon"></ion-icon>
+          <ion-label position="stacked" class="form-label">Tipo do Produto</ion-label>
+          <ion-input
+            [(ngModel)]="produto.tipo"
+            name="tipo"
+            required
+            placeholder="Digite o tipo do produto"
+            [class.invalid-input]="formSubmitted && !produto.tipo"
+          ></ion-input>
+          <ion-note slot="helper" class="form-helper">Ex: Sorvete, Picolé</ion-note>
+          <ion-note slot="error" class="form-error" *ngIf="formSubmitted && !produto.tipo">Campo obrigatório</ion-note>
+        </ion-item>
+
+        <ion-item lines="full" class="form-item">
+          <ion-icon name="ice-cream-outline" slot="start" class="form-icon"></ion-icon>
+          <ion-label position="stacked" class="form-label">Sabor do Produto</ion-label>
+          <ion-input
+            [(ngModel)]="produto.sabor"
+            name="sabor"
+            required
+            placeholder="Digite o sabor do produto"
+            [class.invalid-input]="formSubmitted && !produto.sabor"
+          ></ion-input>
+          <ion-note slot="helper" class="form-helper">Ex: Chocolate, Morango</ion-note>
+          <ion-note slot="error" class="form-error" *ngIf="formSubmitted && !produto.sabor">Campo obrigatório</ion-note>
+        </ion-item>
+
+        <ion-button expand="full" class="animated-button" (click)="nextStep()" [disabled]="!produto.tipo || !produto.sabor">
+          Próximo
+        </ion-button>
+      </div>
+
+      <!-- Passo 2: Preço e Quantidade -->
+      <div *ngIf="currentStep === 2" [@slideAnimation]>
+        <h2 class="ion-text-center step-title">Passo 2: Preço e Quantidade</h2>
+        <ion-item lines="full" class="form-item">
+          <ion-icon name="cash-outline" slot="start" class="form-icon"></ion-icon>
+          <ion-label position="stacked" class="form-label">Preço do Produto</ion-label>
+          <ion-input
+            [(ngModel)]="precoFormatado"
+            name="preco"
+            required
+            placeholder="Digite o preço do produto"
+            [class.invalid-input]="formSubmitted && !precoFormatado"
+            (ionInput)="filtrarNumeros($event)"
+            mask="separator.2"
+            thousandSeparator="."
+            decimalMarker=","
+            prefix="R$ "></ion-input>
+          <ion-note slot="helper" class="form-helper">Ex: R$ 5,00</ion-note>
+          <ion-note slot="error" class="form-error" *ngIf="formSubmitted && !precoFormatado">Campo obrigatório</ion-note>
+        </ion-item>
+
+        <ion-item lines="full" class="form-item">
+          <ion-icon name="basket-outline" slot="start" class="form-icon"></ion-icon>
+          <ion-label position="stacked" class="form-label">Quantidade do Produto</ion-label>
+          <ion-input
+            [(ngModel)]="produto.quantidade"
+            name="quantidade"
+            type="number"
+            required
+            placeholder="Digite a quantidade do produto"
+            [class.invalid-input]="formSubmitted && (!produto.quantidade || produto.quantidade <= 0)"
+            min="0"
+            (ionChange)="validarQuantidade($event)"
+          ></ion-input>
+          <ion-note slot="helper" class="form-helper">Ex: 10</ion-note>
+          <ion-note slot="error" class="form-error" *ngIf="formSubmitted && (!produto.quantidade || produto.quantidade <= 0)">
+            Quantidade inválida
+          </ion-note>
+        </ion-item>
+
+        <ion-button expand="full" class="animated-button" (click)="previousStep()">Anterior</ion-button>
+        <ion-button expand="full" class="animated-button" (click)="nextStep()" [disabled]="!precoFormatado || !produto.quantidade || produto.quantidade <= 0">
+          Próximo
+        </ion-button>
+      </div>
+
+      <!-- Passo 3: Confirmação -->
+      <div *ngIf="currentStep === 3" [@slideAnimation]>
+        <h2 class="ion-text-center step-title">Passo 3: Confirmação</h2>
+        <!-- Pré-visualização do Produto -->
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title class="ion-text-center">{{ produto.tipo || 'Tipo do Produto' }}</ion-card-title>
+            <ion-card-subtitle class="ion-text-center">{{ produto.sabor || 'Sabor do Produto' }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="ion-text-center">Preço: {{ produto.preco | currency:'BRL' }}</p>
+            <p class="ion-text-center">Quantidade: {{ produto.quantidade || 0 }}</p>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-button expand="full" class="animated-button" (click)="previousStep()">Anterior</ion-button>
+        <ion-button expand="full" class="animated-button" (click)="onSubmit()" [disabled]="isLoading">
+          {{ isLoading ? 'Cadastrando...' : 'Cadastrar' }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
